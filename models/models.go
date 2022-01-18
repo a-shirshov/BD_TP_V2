@@ -5,20 +5,20 @@ type Error struct {
 }
 
 type User struct {
-	ID int `db:"id" json:"id,omitempty"`
-	Nickname string `db:"nickname" json:"nickname,omitempty"`
-	Fullname string `db:"fullname" json:"fullname,omitempty"`
-	About string  `db:"about" json:"about,omitempty"`
-	Email string `db:"email" json:"email,omitempty"`
+	ID int `json:"id,omitempty"`
+	Nickname string `json:"nickname,omitempty"`
+	Fullname string `json:"fullname,omitempty"`
+	About string  `json:"about,omitempty"`
+	Email string `json:"email,omitempty"`
 }
 
 type Forum struct {
-	ID int `db:"id"`
-	Title string `db:"title"`
-	User string	`db:"nickname"`
-	Slug string `db:"slug"`
-	Posts int `db:"posts"`
-	Threads int `db:"threads"`
+	ID int `json:"id,omitempty"`
+	Title string `json:"title,omitempty"`
+	User string	`json:"user,omitempty"`
+	Slug string `json:"slug,omitempty"`
+	Posts int `json:"posts,omitempty"`
+	Threads int `json:"threads,omitempty"`
 }
 
 type Thread struct {

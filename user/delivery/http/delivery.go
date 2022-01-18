@@ -52,8 +52,10 @@ func (uD *UserDelivery) ProfileInfoV2(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err == models.ErrorUserNotFound {
 			response.SendResponse(w,http.StatusNotFound,models.Error{Message: err.Error()})
+			return
 		} else {
 			response.SendResponse(w, http.StatusInternalServerError,models.Error{Message: err.Error()})
+			return
 		}
 	}
 	response.SendResponse(w, http.StatusOK,user)
@@ -74,7 +76,7 @@ func (uD *UserDelivery) UpdateProfileV2(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		switch err {
 
-		case models.ErrorUserExists:
+		case models.ErrorUserNotFound:
 			response.SendResponse(w,http.StatusNotFound,models.Error{Message: err.Error()})
 			return
 

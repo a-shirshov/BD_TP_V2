@@ -6,11 +6,11 @@ import (
 	userRepo "bd_tp_V2/user/repository"
 	userUsecase "bd_tp_V2/user/usecase"
 
-	/*
+	
 	forumDelivery "bd_tp_V2/forum/delivery/http"
 	forumRepo "bd_tp_V2/forum/repository"
 	forumUsecase "bd_tp_V2/forum/usecase"
-
+	/*
 	threadDelivery "bd_tp_V2/thread/delivery/http"
 	threadRepo "bd_tp_V2/thread/repository"
 	threadUsecase "bd_tp_V2/thread/usecase"
@@ -46,24 +46,24 @@ func main() {
 	}
 
 	userR := userRepo.NewRepository(db)
-	/*
 	forumR := forumRepo.NewForumRepository(db)
+	/*
 	threadR := threadRepo.NewThreadRepository(db)
 	postR := postRepo.NewPostRepository(db)
 	serviceR := serviceRepo.NewServiceRepository(db)
 	*/
 
 	userU := userUsecase.NewUserUsecase(userR)
+	forumU := forumUsecase.NewForumUsecase(forumR, userR /*threadR*/)
 	/*
-	forumU := forumUsecase.NewForumUsecase(forumR, userR, threadR)
 	threadU := threadUsecase.NewThreadUsecase(threadR, postR, userR, forumR)
 	postU := postUsecase.NewPostUsecase(postR, userR, forumR, threadR)
 	serviceU := serviceUsecase.NewServiceUseCase(serviceR)
 	*/
 
 	userD := userDelivery.NewUserDelivery(userU)
-	/*
 	forumD := forumDelivery.NewForumDelivery(forumU)
+	/*
 	threadD := threadDelivery.NewThreadDelivery(threadU)
 	postD := postDelivery.NewPostDelivery(postU)
 	serviceD := serviceDelivery.NewServiceDelivery(serviceU)
@@ -73,9 +73,9 @@ func main() {
 	rApi := r.PathPrefix("/api").Subrouter()
 	userRouter := rApi.PathPrefix("/user").Subrouter()
 	register.UserEndpoints(userRouter, userD)
-	/*
 	forumRouter := rApi.PathPrefix("/forum").Subrouter()
 	register.ForumEndpoints(forumRouter, forumD)
+	/*
 	threadRouter := rApi.PathPrefix("/thread").Subrouter()
 	register.ThreadEndpoints(threadRouter, threadD)
 	postRouter := rApi.PathPrefix("/post").Subrouter()

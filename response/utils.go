@@ -17,21 +17,17 @@ func GetUserFromRequest(r io.Reader) (*models.User, error) {
 	return userInput, nil
 }
 
-/*
+
 func GetForumFromRequest(r io.Reader) (*models.Forum, error) {
-	forumInput := new(ForumResponse)
+	forumInput := new(models.Forum)
 	//err := json.UnmarshalFromReader(r, forumInput)
 	err := json.NewDecoder(r).Decode(forumInput)
 	if err != nil {
 		return nil, err
 	}
-	result := &models.Forum{
-		Title: forumInput.Title,
-		User:  forumInput.User,
-		Slug:  forumInput.Slug,
-	}
-	return result, nil
+	return forumInput, nil
 }
+/*
 
 func GetThreadFromRequest(r io.Reader) (*models.Thread, error) {
 	threadInput := new(ThreadResponse)

@@ -11,6 +11,10 @@ const (
 	FindUserByEmailQueryV2 = `select nickname,fullname,about,email from "user" where email = $1`
 	UpdateUserQuery = `update "user" set fullname = $1, about = $2, email = $3 
 	where nickname = $4 returning nickname, fullname, about, email`
+
+	ForumDetailsQuery = `select title, "user", slug, posts, threads from "forum" where slug = $1`
+	CreateForumQuery = `insert into "forum" (title, "user", slug) values ($1, $2, $3) 
+	returning title, "user", slug, posts, threads`
 )
 
 var queries = []Queries {
@@ -29,5 +33,13 @@ var queries = []Queries {
 	{
 		Name: "UpdateUserQuery",
 		Query: UpdateUserQuery,
+	},
+	{
+		Name: "ForumDetailsQuery",
+		Query: ForumDetailsQuery,
+	},
+	{
+		Name: "CreateForumQuery",
+		Query: CreateForumQuery,
 	},
 }
