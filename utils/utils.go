@@ -6,10 +6,10 @@ import (
 
 func InitPostgresDB() (*pgx.ConnPool, error) {
 	config := pgx.ConnConfig{
-		User:                 "postgres",
-		Database:             "postgres",
+		User:                 "a_shirshov",
+		Database:             "bd_tp_V2",
 		Password:             "password",
-		Port: 						5436,	
+		Port: 						5432,	
 		PreferSimpleProtocol: false,
 	}
 	connPoolConfig := pgx.ConnPoolConfig{

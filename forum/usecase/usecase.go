@@ -3,7 +3,7 @@ package usecase
 import (
 	forumRepo "bd_tp_V2/forum/repository"
 	"bd_tp_V2/models"
-	//threadRepo "bd_tp_V2/thread/repository"
+	threadRepo "bd_tp_V2/thread/repository"
 	userRepo "bd_tp_V2/user/repository"
 	"github.com/satori/go.uuid"
 )
@@ -11,14 +11,14 @@ import (
 type Usecase struct {
 	forumRepo  *forumRepo.Repository
 	userRepo   *userRepo.Repository
-	/*threadRepo *threadRepo.Repository */
+	threadRepo *threadRepo.Repository 
 }
 
-func NewForumUsecase(fR *forumRepo.Repository, uR *userRepo.Repository, /*tR *threadRepo.Repository*/) *Usecase {
+func NewForumUsecase(fR *forumRepo.Repository, uR *userRepo.Repository, tR *threadRepo.Repository) *Usecase {
 	return &Usecase{
 		forumRepo:  fR,
 		userRepo:   uR,
-		/*threadRepo: tR,*/
+		threadRepo: tR,
 	}
 }
 
@@ -60,78 +60,40 @@ func (fU *Usecase) ForumDetails (slug string) (*models.Forum, error) {
 	return forum, err
 }
 
-/*
-
-func (fU *Usecase) CreateForum(f *models.Forum) (*models.Forum, int, error) {
-	user, err := fU.userRepo.ProfileInfo(f.User)
-	if err != nil {
-		return nil, 404, err
-	}
-	if f.Slug != "" {
-		oldForum, err := fU.forumRepo.ForumDetails(f.Slug)
-		if err == nil {
-			return oldForum, 409, nil
-		}
-	}
-	forum, code, err := fU.forumRepo.CreateForum(f, user.ID)
-	forum.User = user.Nickname
-	if err != nil {
-		return nil, code, err
-	}
-	return forum, code, err
-}
-
-func (fU *Usecase) ForumDetails(slug string) (*models.Forum, error) {
+func (fU *Usecase) ForumThreadCreate (slug string, thread *models.Thread) (*models.Thread, error) {
 	forum, err := fU.forumRepo.ForumDetails(slug)
 	if err != nil {
 		return nil, err
 	}
-	return forum, nil
-}
-
-func (fU *Usecase) ForumSlugCreate(th *models.Thread, slug string) (*models.Thread, int, error) {
-	userId, err := fU.userRepo.GetIdByNickname(th.Author)
+	user, err := fU.userRepo.GetUserByNickname(thread.Author)
 	if err != nil {
-
-		return nil, 404, err
-	}
-
-	forum, err := fU.forumRepo.ForumDetails(slug)
-	if err != nil {
-
-		return nil, 404, err
-	}
-
-	if th.Slug != "" {
-		oldThread, err := fU.threadRepo.ThreadDetailsBySlug(th.Slug)
-		if err != nil {
-		} else {
-			return oldThread, 409, nil
-		}
-	}
-
-	if th.Created == "" {
-		thread, code, err := fU.forumRepo.ForumSlugCreateWithoutTimeStamp(th, forum, userId)
-		if err != nil {
-
-			return nil, code, err
-		}
-		thread.Forum = forum.Slug
-		return thread, code, err
-	}
-
-	thread, code, err := fU.forumRepo.ForumSlugCreate(th, forum, userId)
-	if err != nil {
-
-		return nil, code, err
+		return nil, err
 	}
 	thread.Forum = forum.Slug
-	return thread, code, err
+	//
+	thread.Author = user.Nickname
+	if thread.Slug != "" {
+		oldThread, err := fU.threadRepo.ThreadDetails(thread.Slug)
+		if err == nil {
+			return oldThread, models.ErrorThreadExists
+		} else if err == models.ErrorThreadNotFound {
+			newThread, err := fU.forumRepo.ForumThreadCreate(thread)
+			if err != nil {
+				return nil, err
+			}
+			return newThread, err
+		}
+	}
+	newThread, err := fU.forumRepo.ForumThreadCreate(thread)
+	if err != nil {
+		return nil, err
+	}
+	return newThread, err
 }
 
-func (fU *Usecase) GetThreadsByForum(slug, limit, since, desc string) ([]models.Thread, error) {
+func (fU *Usecase) GetThreadsByForum(slug, limit, since, desc string) (*models.Threads, error) {
 	//Прверка на наличие форума
-	_, err := fU.forumRepo.GetIdAndTitleBySlug(slug)
+	_, err := fU.forumRepo.ForumDetails(slug)
 	if err != nil {
 
 		return nil, err
@@ -148,19 +110,17 @@ func (fU *Usecase) GetThreadsByForum(slug, limit, since, desc string) ([]models.
 	return threads, nil
 }
 
-func (fU *Usecase) GetForumUsers(slug, limit, since, desc string) ([]models.User, error) {
-	forum, err := fU.ForumDetails(slug)
+func (fU *Usecase) GetForumUsers(slug, limit, since, desc string) (*models.Users, error) {
+	_, err := fU.ForumDetails(slug)
 	if err != nil {
 		return nil, err
 	}
 	if limit == "" {
 		limit = "100"
 	}
-	users, err := fU.forumRepo.GetForumUsersById(forum.ID, limit, since, desc)
+	users, err := fU.forumRepo.GetForumUsers(slug, limit, since, desc)
 	if err != nil {
 		return nil, err
 	}
 	return users, nil
 }
-
-*/

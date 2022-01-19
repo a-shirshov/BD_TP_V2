@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Error struct {
 	Message string `json:"message,omitempty"`
 }
@@ -22,21 +24,14 @@ type Forum struct {
 }
 
 type Thread struct {
-	ID int `db:"id"` 
-	Title string `db:"title"` 
-	Author string `db:"author"` 
-	Forum string `db:"forum"`
-	Message string `db:"message"`
-	Votes int `db:"votes"`
-	Slug string `db:"slug"`
-	Created string `db:"created"`
-}
-
-type ForumThreadsRequest struct {
-	Slug string 
-	Limit string 
-	Since string 
-	Desc string 
+	ID int `json:"id,omitempty"`
+	Title string `json:"title,omitempty"`
+	Author string `json:"author,omitempty"`
+	Forum string `json:"forum,omitempty"`
+	Message string `json:"message,omitempty"`
+	Votes int `json:"votes,omitempty"`
+	Slug string `json:"slug,omitempty"`
+	Created time.Time `json:"created,omitempty"`
 }
 
 type Threads struct {
@@ -44,18 +39,22 @@ type Threads struct {
 }
 
 type Post struct {
-	ID int `db:"id"`
-	Parent int `db:"parent"` 
-	Author string `db:"author"` 
-	Message string `db:"message"`
-	Edited bool `db:"edited"`
-	Forum string `db:"forum"`
-	Thread int `db:"thread"`
-	Created string `db:"created"`
+	ID int `json:"id,omitempty"`
+	Parent int `json:"parent,omitempty"` 
+	Author string `json:"author,omitempty"` 
+	Message string `json:"message,omitempty"`
+	Edited bool `json:"isEdited,omitempty"`
+	Forum string `json:"forum,omitempty"`
+	Thread int `json:"thread,omitempty"`
+	Created time.Time `json:"created,omitempty"`
 }
 
 type Posts struct {
 	Posts []Post `json:"posts,omitempty"`
+}
+
+type Users struct {
+	Users []User `json:"users,omitempty"`
 }
 
 type Vote struct {
@@ -68,10 +67,10 @@ type PostsRelated struct {
 }
 
 type FullPostInfo struct {
-	Post *Post
-	Author *User
-	Thread *Thread
-	Forum *Forum
+	Post *Post `json:"post"`
+	Author *User `json:"author"`
+	Thread *Thread `json:"thread"`
+	Forum *Forum `json:"forum"`
 }
 
 type PostMessage struct {

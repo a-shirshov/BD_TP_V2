@@ -4,7 +4,6 @@ import (
 	forumUsecase "bd_tp_V2/forum/usecase"
 	"bd_tp_V2/models"
 	"bd_tp_V2/response"
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -27,7 +26,6 @@ func (fD *ForumDelivery) CreateForumV2(w http.ResponseWriter, r *http.Request) {
 
 	forum, err := fD.ForumUsecase.CreateForum(f)
 	if err != nil {
-		fmt.Println(err)
 		switch err {
 		case models.ErrorForumExists:
 			response.SendResponse(w,http.StatusConflict,forum)
@@ -62,61 +60,29 @@ func (fD *ForumDelivery) ForumDetailsV2(w http.ResponseWriter, r *http.Request) 
 	response.SendResponse(w,http.StatusOK,forum)
 }
 
-
-/*
-func (fD *ForumDelivery) ForumDetails(w http.ResponseWriter, r *http.Request) {
-
-	path := r.URL.Path
-	split := strings.Split(path, "/")
-	slug := split[len(split)-2]
-
-	forum, err := fD.ForumUsecase.ForumDetails(slug)
-	if err != nil {
-		errorResponse := &response.Error{
-			Message: "No forum with this slug:" + slug,
-		}
-		response.SendResponse(w, 404, errorResponse)
-		return
-	}
-	forumResponse := &response.ForumResponse{
-		Title:   forum.Title,
-		User:    forum.User,
-		Slug:    forum.Slug,
-		Posts:   &forum.Posts,
-		Threads: &forum.Threads,
-	}
-	response.SendResponse(w, 200, forumResponse)
-}
-
-func (fD *ForumDelivery) ForumSlugCreate(w http.ResponseWriter, r *http.Request) {
+func (fD *ForumDelivery) ForumThreadCreateV2(w http.ResponseWriter, r *http.Request) {
 	th, err := response.GetThreadFromRequest(r.Body)
 	if err != nil {
-
 		return
 	}
 	path := r.URL.Path
 	split := strings.Split(path, "/")
 	slug := split[len(split)-2]
-	thread, code, err := fD.ForumUsecase.ForumSlugCreate(th, slug)
-	if err != nil {
 
-		errorResponse := &response.Error{
-			Message: "Mistake with author or slug",
+	thread, err := fD.ForumUsecase.ForumThreadCreate(slug, th)
+	if err != nil {
+		if err == models.ErrorThreadExists {
+			response.SendResponse(w, http.StatusConflict, thread)
+			return
+		} else if err == models.ErrorUserNotFound || err == models.ErrorForumNotFound {
+			response.SendResponse(w, http.StatusNotFound, models.Error{Message: err.Error()})
+			return 
+		} else {
+			response.SendResponse(w, http.StatusInternalServerError, models.Error{Message: err.Error()})
+			return 
 		}
-		response.SendResponse(w, 404, errorResponse)
-		return
 	}
-	threadResponse := &response.ThreadResponse{
-		ID:      &thread.ID,
-		Title:   thread.Title,
-		Author:  thread.Author,
-		Forum:   thread.Forum,
-		Message: thread.Message,
-		Votes:   &thread.Votes,
-		Slug:    thread.Slug,
-		Created: thread.Created,
-	}
-	response.SendResponse(w, code, threadResponse)
+	response.SendResponse(w, http.StatusCreated, thread)
 }
 
 func (fD *ForumDelivery) GetThreadsByForum(w http.ResponseWriter, r *http.Request) {
@@ -141,32 +107,19 @@ func (fD *ForumDelivery) GetThreadsByForum(w http.ResponseWriter, r *http.Reques
 
 	threads, err := fD.ForumUsecase.GetThreadsByForum(slug, limit, since, desc)
 	if err != nil {
-
-		errorResponse := &response.Error{
-			Message: "No forum with with slug:" + slug,
+		if err == models.ErrorForumNotFound {
+			response.SendResponse(w, http.StatusNotFound, models.Error{Message: err.Error()})
+			return 
+		} else {
+			response.SendResponse(w, http.StatusInternalServerError, models.Error{Message: err.Error()})
+			return 
 		}
-		response.SendResponse(w, 404, errorResponse)
-		return
 	}
-	var threadsResponse []response.ThreadResponse
-	for index := range threads {
-		threadResponse := &response.ThreadResponse{
-			ID:      &threads[index].ID,
-			Title:   threads[index].Title,
-			Author:  threads[index].Author,
-			Forum:   threads[index].Forum,
-			Message: threads[index].Message,
-			Votes:   &threads[index].Votes,
-			Slug:    threads[index].Slug,
-			Created: threads[index].Created,
-		}
-		threadsResponse = append(threadsResponse, *threadResponse)
+	if len(threads.Threads) == 0 {
+		response.SendResponse(w, http.StatusOK, []models.Thread{})
+		return 
 	}
-	if len(threadsResponse) == 0 {
-		response.SendResponse(w, 200, []response.ThreadResponse{})
-		return
-	}
-	response.SendResponse(w, 200, threadsResponse)
+	response.SendResponse(w, http.StatusOK, threads.Threads)
 }
 
 func (fD *ForumDelivery) GetForumUsers(w http.ResponseWriter, r *http.Request) {
@@ -190,27 +143,19 @@ func (fD *ForumDelivery) GetForumUsers(w http.ResponseWriter, r *http.Request) {
 
 	users, err := fD.ForumUsecase.GetForumUsers(slug, limit, since, desc)
 	if err != nil {
+		if err == models.ErrorForumNotFound {
+			response.SendResponse(w,http.StatusNotFound,models.Error{Message: err.Error()})
+			return
+		} else {
+			response.SendResponse(w, http.StatusInternalServerError, models.Error{Message: err.Error()})
+			return 
+		}
+	}
 
-		errorResponse := &response.Error{
-			Message: "No forum with with slug:" + slug,
-		}
-		response.SendResponse(w, 404, errorResponse)
-		return
+	if len(users.Users) == 0 {
+		response.SendResponse(w, http.StatusOK, []models.User{})
+		return 
 	}
-	var usersResponse []response.UserResponse
-	for _, user := range users {
-		userResponse := &response.UserResponse{
-			Nickname: user.Nickname,
-			Fullname: user.Fullname,
-			About:    user.About,
-			Email:    user.Email,
-		}
-		usersResponse = append(usersResponse, *userResponse)
-	}
-	if len(usersResponse) == 0 {
-		response.SendResponse(w, 200, []response.ThreadResponse{})
-		return
-	}
-	response.SendResponse(w, 200, usersResponse)
+	response.SendResponse(w, http.StatusOK, users.Users)
 }
-*/
+

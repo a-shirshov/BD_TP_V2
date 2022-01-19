@@ -152,3 +152,8 @@ select p.id,p.parent,u.nickname as author,p.message,p.edited,f.slug as forum,p.t
     join "forum" as f on f.id = t.forum_id
     join "user" as u on u.id = p.user_id
     where p.id = 2816;
+
+
+select id, parent, author, message, is_edited, forum, thread, created from post 
+	where thread = 200
+	order by path, id limit 100
