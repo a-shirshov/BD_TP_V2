@@ -111,9 +111,6 @@ DROP TRIGGER IF EXISTS increment_forum_threads ON "vote";
 create trigger increment_forum_threads after insert on thread for each row execute procedure increment_forum_threads();
 
 
-drop index if exists idx_user_on_nickname;
-drop index if exists idx_user_on_email;
-
 drop index if exists idx_forum_slug;
 
 drop index if exists idx_thread_on_slug;
@@ -130,9 +127,6 @@ drop index if exists idx_post_on_parent_path_and_path_and_id;
 drop index if exists idx_vote_user_thread;
 
 drop index if exists idx_forum_user_forumusers;
-
-create index if not exists idx_user_on_nickname on "user" using hash(nickname);
-create index if not exists idx_user_on_email on "user" using hash(email);
 
 create index if not exists idx_forum_slug on forum using hash(slug);
 
@@ -153,3 +147,9 @@ create index if not exists idx_forum_user_forumusers on "forum_user" using btree
 
 VACUUM;
 VACUUM ANALYSE;
+
+
+select *
+from pg_indexes
+where tablename = 'user'
+order by schemaname, tablename, indexname;
