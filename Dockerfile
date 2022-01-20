@@ -25,7 +25,13 @@ RUN /etc/init.d/postgresql start &&\
     /etc/init.d/postgresql stop
 
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/$PGVER/main/pg_hba.conf
-RUN echo "listen_addresses='*'" >> /etc/postgresql/$PGVER/main/postgresql.conf
+RUN echo "listen_addresses='*'\n\
+synchronous_commit = off\n\
+fsync = off\n\
+shared_buffers = 256MB\n\
+effective_cache_size = 1024MB\n\
+full_page_writes = off\n\
+fsync = off" >> /etc/postgresql/$PGVER/main/postgresql.conf
 
 VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 

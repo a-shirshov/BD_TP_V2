@@ -33,14 +33,14 @@ func (uD *UserDelivery) CreateUserV2(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if err == models.ErrorUserExists {
-			response.SendResponse(w,http.StatusConflict,users)
+			response.OldSendResponse(w,http.StatusConflict,users.Users)
 			return
 		} else {
-			response.SendResponse(w, http.StatusInternalServerError, models.Error{Message: err.Error()})
+			response.OldSendResponse(w, http.StatusInternalServerError, models.Error{Message: err.Error()})
 			return
 		}
 	}
-	response.SendResponse(w, http.StatusCreated,users[0])
+	response.SendResponse(w, http.StatusCreated,users.Users[0])
 }
 
 func (uD *UserDelivery) ProfileInfoV2(w http.ResponseWriter, r *http.Request) {

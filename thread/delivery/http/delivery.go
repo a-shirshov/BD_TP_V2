@@ -66,10 +66,10 @@ func (tD *ThreadDelivery) CreatePostsNew(w http.ResponseWriter, r *http.Request)
 		}
 	}
 	if len(posts.Posts) == 0 {
-		response.SendResponse(w, http.StatusCreated, []models.Post{})
+		response.OldSendResponse(w, http.StatusCreated, []models.Post{})
 		return 
 	}
-	response.SendResponse(w, http.StatusCreated, newPosts.Posts)
+	response.OldSendResponse(w, http.StatusCreated, newPosts.Posts)
 }
 
 func (tD *ThreadDelivery) ThreadVote(w http.ResponseWriter, r *http.Request) {
@@ -129,10 +129,10 @@ func (tD *ThreadDelivery) ThreadGetPosts(w http.ResponseWriter, r *http.Request)
 	}
 
 	if len(posts.Posts) == 0 {
-		response.SendResponse(w,http.StatusOK,[]models.Post{})
+		response.OldSendResponse(w,http.StatusOK,[]models.Post{})
 		return
 	}
-	response.SendResponse(w,http.StatusOK, posts.Posts)
+	response.OldSendResponse(w,http.StatusOK, posts.Posts)
 }
 
 func (tD *ThreadDelivery) ThreadDetailsUpdate(w http.ResponseWriter, r *http.Request) {

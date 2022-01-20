@@ -4,6 +4,7 @@ import (
 	"bd_tp_V2/response"
 	serviceUsecase "bd_tp_V2/service/usecase"
 	"net/http"
+	"bd_tp_V2/models"
 )
 
 type ServiceDelivery struct {
@@ -19,7 +20,7 @@ func NewServiceDelivery(useCase *serviceUsecase.Usecase) *ServiceDelivery {
 func (d *ServiceDelivery) Clear(w http.ResponseWriter, r *http.Request) {
 	err := d.useCase.Clear()
 	if err != nil {
-		response.SendResponse(w, http.StatusInternalServerError,err)
+		response.SendResponse(w, http.StatusInternalServerError,models.Error{Message: err.Error()})
 		return
 	}
 	response.SendResponse(w, http.StatusOK, nil)
@@ -28,7 +29,7 @@ func (d *ServiceDelivery) Clear(w http.ResponseWriter, r *http.Request) {
 func (d *ServiceDelivery) GetStatus(w http.ResponseWriter, r *http.Request) {
 	status, err := d.useCase.GetStatus()
 	if err != nil {
-		response.SendResponse(w, http.StatusInternalServerError,err)
+		response.SendResponse(w, http.StatusInternalServerError,models.Error{Message: err.Error()})
 		return
 	}
 	response.SendResponse(w, http.StatusOK, status)

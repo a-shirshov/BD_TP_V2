@@ -115,7 +115,7 @@ func easyjsonD2b7633eDecodeBdTpV2Models1(in *jlexer.Lexer, out *Users) {
 			continue
 		}
 		switch key {
-		case "users":
+		case "Users":
 			if in.IsNull() {
 				in.Skip()
 				out.Users = nil
@@ -152,11 +152,12 @@ func easyjsonD2b7633eEncodeBdTpV2Models1(out *jwriter.Writer, in Users) {
 	out.RawByte('{')
 	first := true
 	_ = first
-	if len(in.Users) != 0 {
-		const prefix string = ",\"users\":"
-		first = false
+	{
+		const prefix string = ",\"Users\":"
 		out.RawString(prefix[1:])
-		{
+		if in.Users == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
 			out.RawByte('[')
 			for v2, v3 := range in.Users {
 				if v2 > 0 {

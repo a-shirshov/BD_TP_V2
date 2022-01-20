@@ -71,7 +71,7 @@ func GetPostFromRequest(r io.Reader) (*models.Post, error) {
 }
 
 
-func SendResponse(w http.ResponseWriter, statusCode int, response interface{}) {
+func OldSendResponse(w http.ResponseWriter, statusCode int, response interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	if response != nil {
@@ -80,6 +80,17 @@ func SendResponse(w http.ResponseWriter, statusCode int, response interface{}) {
 			return
 		}
 		_, err = w.Write(b)
+		if err != nil {
+			return
+		}
+	}
+}
+
+func SendResponse(w http.ResponseWriter, statusCode int, response json.Marshaler) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	if response != nil {
+		_, _, err := json.MarshalToHTTPResponseWriter(response,w)
 		if err != nil {
 			return
 		}

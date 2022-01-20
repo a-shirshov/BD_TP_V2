@@ -15,22 +15,22 @@ func NewUserUsecase(uR *userRepo.Repository) *Usecase {
 	}
 }
 
-func (uR *Usecase) CreateUserV2 (u *models.User) ([]models.User, error) {
-	var users []models.User
+func (uR *Usecase) CreateUserV2 (u *models.User) (*models.Users, error) {
+	users := &models.Users{}
 
 	oldNicknameUser, errNickname := uR.userRepo.GetUserByNickname(u.Nickname)
 	if errNickname == nil {
-		users = append(users, *oldNicknameUser)
+		users.Users = append(users.Users, *oldNicknameUser)
 	}
 	
 	oldEmailUser, errEmail := uR.userRepo.GetUserByEmail(u.Email)
 	if errEmail == nil {
 		if oldNicknameUser != nil {
 			if oldNicknameUser.Nickname != oldEmailUser.Nickname && oldEmailUser.Email != oldNicknameUser.Email {
-				users = append(users, *oldEmailUser)
+				users.Users = append(users.Users, *oldEmailUser)
 			}
 		} else {
-			users = append(users, *oldEmailUser)
+			users.Users = append(users.Users, *oldEmailUser)
 		}
 	}
 
@@ -42,7 +42,7 @@ func (uR *Usecase) CreateUserV2 (u *models.User) ([]models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	users = append(users, *newUser)
+	users.Users = append(users.Users, *newUser)
 	return users, nil
 }
 

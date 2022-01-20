@@ -116,10 +116,10 @@ func (fD *ForumDelivery) GetThreadsByForum(w http.ResponseWriter, r *http.Reques
 		}
 	}
 	if len(threads.Threads) == 0 {
-		response.SendResponse(w, http.StatusOK, []models.Thread{})
+		response.OldSendResponse(w, http.StatusOK, []models.Thread{})
 		return 
 	}
-	response.SendResponse(w, http.StatusOK, threads.Threads)
+	response.OldSendResponse(w, http.StatusOK, threads.Threads)
 }
 
 func (fD *ForumDelivery) GetForumUsers(w http.ResponseWriter, r *http.Request) {
@@ -153,9 +153,9 @@ func (fD *ForumDelivery) GetForumUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(users.Users) == 0 {
-		response.SendResponse(w, http.StatusOK, []models.User{})
+		response.OldSendResponse(w, http.StatusOK, []models.Users{})
 		return 
 	}
-	response.SendResponse(w, http.StatusOK, users.Users)
+	response.OldSendResponse(w, http.StatusOK, users.Users)
 }
 
