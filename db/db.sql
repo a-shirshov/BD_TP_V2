@@ -116,10 +116,8 @@ drop index if exists idx_user_on_email;
 
 drop index if exists idx_forum_slug;
 
-drop index if exists idx_thread_on_created;
 drop index if exists idx_thread_on_slug;
 drop index if exists idx_thread_on_forum_and_created;
-drop index if exists idx_thread_on_forum;
 drop index if exists idx_thread_on_id_and_forum;
 drop index if exists idx_thread_on_id_and_forum;
 
@@ -127,10 +125,7 @@ drop index if exists idx_post_on_id;
 drop index if exists idx_post_on_thread;
 drop index if exists idx_post_on_thread_and_path_and_id;
 drop index if exists idx_post_on_thread_and_path_and_id;
-drop index if exists idx_post_on_parent;
-drop index if exists idx_post_on_parent_path_and_path;
 drop index if exists idx_post_on_parent_path_and_path_and_id;
-drop index if exists idx_post_on_parent_and_thread;
 
 drop index if exists idx_vote_user_thread;
 
@@ -141,20 +136,15 @@ create index if not exists idx_user_on_email on "user" using hash(email);
 
 create index if not exists idx_forum_slug on forum using hash(slug);
 
-create index if not exists idx_thread_on_created on "thread"(created);
 create index if not exists idx_thread_on_slug on "thread" using hash(slug);
 create index if not exists idx_thread_on_forum_and_created on "thread" using btree(forum, created);
-create index if not exists idx_thread_on_forum on thread using hash(forum);
 create index if not exists idx_thread_on_id_and_forum on "thread" using btree (id, forum);
 create index if not exists idx_thread_on_forum_and_created on "thread" using btree(forum, created);
 
 create unique index if not exists idx_post_on_id ON "post" using btree (id);
 create index if not exists idx_post_on_thread on post using btree (thread);
 create index if not exists idx_post_on_thread_and_path_and_id on "post" using btree (thread, path, id);
-create index if not exists idx_post_on_parent on "post" using btree (parent, id);
-create index if not exists idx_post_on_parent_path_and_path on "post" using btree((path[1]), path);
 create index if not exists idx_post_on_parent_path_and_path_and_id ON post using btree ((path[1]), path, id);
-create index if not exists idx_post_on_parent_and_thread ON post using btree (parent, thread);
 
 create index if not exists idx_vote_user_thread on "vote" using btree("user", thread);
 
